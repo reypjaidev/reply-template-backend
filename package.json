@@ -33,6 +33,5 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "zod": "^4.4.3"
-  },
-  "packageManager": "pnpm@8.15.1"
+  }
 }
