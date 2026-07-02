@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon --exec \"ts-node --esm\" server.ts",
     "build": "tsc",
-    "start": "node --watch server.ts"
+    "start": "node --watch server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +22,13 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^25.9.3",
+    "@types/supertest": "^6.0.2",
+    "mongodb-memory-server": "^10.1.2",
     "nodemon": "^3.1.14",
+    "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
