@@ -5,11 +5,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { authService } from "../../../src/modules/auth/auth.service.ts";
-import { UnauthorizedError, ValidationError } from "../../../src/errors/index.ts";
-import { usersRepository } from "../../../src/modules/users/users.repository.ts";
+import { authService } from "@/modules/auth/auth.service";
+import { UnauthorizedError, ValidationError } from "@/errors/index";
+import { usersRepository } from "@/modules/users/users.repository";
 
-vi.mock("../../../src/modules/users/users.repository.ts", () => ({
+vi.mock("@/modules/users/users.repository", () => ({
   usersRepository: {
     emailExists: vi.fn(),
     create: vi.fn(),
@@ -113,15 +113,15 @@ describe("authService.login", () => {
 
   it("uses the identical error message for wrong-email and wrong-password", async () => {
     vi.mocked(usersRepository.findByEmail).mockResolvedValueOnce(null);
-    const wrongEmailErr = await authService
+    const wrongEmailErr = (await authService
       .login({ email: "ghost@example.com", password: "x" })
-      .catch((e) => e);
+      .catch((e: Error) => e)) as Error;
 
     vi.mocked(usersRepository.findByEmail).mockResolvedValueOnce(fakeUser as never);
     vi.mocked(bcrypt.compare).mockResolvedValueOnce(false as never);
-    const wrongPasswordErr = await authService
+    const wrongPasswordErr = (await authService
       .login({ email: "pj@example.com", password: "wrong" })
-      .catch((e) => e);
+      .catch((e: Error) => e)) as Error;
 
     expect(wrongEmailErr.message).toBe(wrongPasswordErr.message);
   });

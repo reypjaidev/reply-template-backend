@@ -4,8 +4,8 @@
 // Nothing here is mocked except the database backend itself.
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import app from "../../../src/app.ts";
-import config from "../../../src/config/index.ts";
+import app from "@/app";
+import config from "@/config/index";
 import { clearTestDB, closeTestDB, connectTestDB } from "../../helpers/db.ts";
 
 const API_PREFIX = config.api.prefix;
