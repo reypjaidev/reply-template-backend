@@ -29,6 +29,9 @@ const config = {
   aws: {
     bucket: process.env.AWS_BUCKET,
   },
+  api: {
+    prefix: "/api/v1",
+  },
 };
 
 export default config;

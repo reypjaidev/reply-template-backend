@@ -6,6 +6,7 @@ import express, {
   type Response,
 } from "express";
 import helmet from "helmet";
+import config from "./config/index.ts";
 import { authMiddleware } from "./middleware/auth.ts";
 import { errorHandler } from "./middleware/errorHandler.ts";
 import { authLimiter, globalLimiter } from "./middleware/rateLimiter.ts";
@@ -43,12 +44,11 @@ app.get("/health", (req: Request, res: Response) => {
     uptime: process.uptime(),
   });
 });
-
 // ── 6. PUBLIC ROUTES ─────────────────────────────────────
-app.use("/api/auth", authLimiter, authRouter);
+app.use(`${config.api.prefix}/auth`, authLimiter, authRouter);
 
 // ── 7. PROTECTED ROUTES ──────────────────────────────────
-app.use("/api/users", authMiddleware, usersRouter);
+app.use(`${config.api.prefix}/users`, authMiddleware, usersRouter);
 
 // ── 8. 404 ───────────────────────────────────────────────
 app.use((req: Request, res: Response) => {
