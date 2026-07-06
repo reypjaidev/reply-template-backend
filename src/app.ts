@@ -1,4 +1,5 @@
 // src/app.ts
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
   type Application,
@@ -31,6 +32,7 @@ app.use(globalLimiter);
 // ── 3. PARSING ───────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // ── 4. LOGGING ───────────────────────────────────────────
 app.use(requestLogger);
