@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import config from "../../config/index.ts";
 import { UnauthorizedError, ValidationError } from "../../errors/index.ts";
 import { usersRepository } from "../users/users.repository.ts";
 import type { AuthResponse, LoginDto, RegisterDto } from "./auth.types.ts";
+import { RefreshTokenModel } from "./refreshToken.model.ts";
 
 export const authService = {
   async register(dto: RegisterDto): Promise<AuthResponse> {
@@ -19,10 +21,12 @@ export const authService = {
       password: hashedPassword,
     });
 
-    const token = generateToken(user._id.toString());
+    const accessToken = generateToken(user._id.toString());
+    const refreshToken = await generateRefreshToken(user._id.toString());
 
     return {
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id.toString(),
         name: user.name,
@@ -42,10 +46,11 @@ export const authService = {
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) throw new UnauthorizedError("Invalid credentials");
 
-    const token = generateToken(user._id.toString());
-
+    const accessToken = generateToken(user._id.toString());
+    const refreshToken = await generateRefreshToken(user._id.toString());
     return {
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id.toString(),
         name: user.name,
@@ -60,4 +65,21 @@ function generateToken(userId: string): string {
   return jwt.sign({ id: userId }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
   });
+}
+
+function hashToken(rawToken: string): string {
+  return crypto.createHash("sha256").update(rawToken).digest("hex");
+}
+
+async function generateRefreshToken(userId: string): Promise<string> {
+  const rawToken = crypto.randomBytes(40).toString("hex");
+  const tokenHash = hashToken(rawToken);
+
+  await RefreshTokenModel.create({
+    userId,
+    token: tokenHash,
+    expiresAt: new Date(Date.now() + config.jwt.refreshTokenExpiresIn),
+  });
+
+  return rawToken;
 }
