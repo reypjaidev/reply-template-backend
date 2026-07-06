@@ -16,7 +16,6 @@ const pinSchema = new Schema<PinDocument>(
       type: Schema.Types.ObjectId,
       unique: true,
       required: [true, "User ID is required"],
-      ref: "User",
     },
     pin: {
       type: String,
