@@ -11,19 +11,16 @@ export async function authMiddleware(
   next: NextFunction,
 ): Promise<void> {
   try {
-    // 1. check header exists
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
+    // 1. read token from the httpOnly cookie set at login/register
+    const token = req.cookies?.accessToken;
+    if (!token) {
       throw new UnauthorizedError("No token provided");
     }
 
-    // 2. extract token
-    const token = authHeader.split(" ")[1];
-
-    // 3. verify token
+    // 2. verify token
     const payload = jwt.verify(token, config.jwt.secret) as { id: string };
 
-    // 4. attach user to request — available in all downstream middleware
+    // 3. attach user to request — available in all downstream middleware
     const user = await usersRepository.findById(payload.id);
     if (!user) throw new UnauthorizedError("User no longer exists");
 
