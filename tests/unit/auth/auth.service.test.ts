@@ -2,12 +2,11 @@
 // Pure unit tests — usersRepository, bcrypt, and jsonwebtoken are all mocked.
 // No DB, no network. Matches the Rules of Thumb: service layer has zero HTTP
 // or infra knowledge, so it's tested in complete isolation from both.
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { authService } from "@/modules/auth/auth.service";
 import { UnauthorizedError, ValidationError } from "@/errors/index";
+import { authService } from "@/modules/auth/auth.service";
 import { usersRepository } from "@/modules/users/users.repository";
+import bcrypt from "bcrypt";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/modules/users/users.repository", () => ({
   usersRepository: {
@@ -27,6 +26,12 @@ vi.mock("bcrypt", () => ({
 vi.mock("jsonwebtoken", () => ({
   default: {
     sign: vi.fn(() => "fake.jwt.token"),
+  },
+}));
+
+vi.mock("@/modules/auth/refreshToken.model", () => ({
+  RefreshTokenModel: {
+    create: vi.fn(),
   },
 }));
 
@@ -70,7 +75,8 @@ describe("authService.register", () => {
       expect.objectContaining({ password: "hashed_pw" }),
     );
     expect(result).toEqual({
-      token: "fake.jwt.token",
+      accessToken: "fake.jwt.token",
+      refreshToken: expect.any(String),
       user: { id: "user123", name: "PJ", email: "pj@example.com" },
     });
   });
@@ -117,7 +123,9 @@ describe("authService.login", () => {
       .login({ email: "ghost@example.com", password: "x" })
       .catch((e: Error) => e)) as Error;
 
-    vi.mocked(usersRepository.findByEmail).mockResolvedValueOnce(fakeUser as never);
+    vi.mocked(usersRepository.findByEmail).mockResolvedValueOnce(
+      fakeUser as never,
+    );
     vi.mocked(bcrypt.compare).mockResolvedValueOnce(false as never);
     const wrongPasswordErr = (await authService
       .login({ email: "pj@example.com", password: "wrong" })
@@ -135,7 +143,8 @@ describe("authService.login", () => {
       password: "Secret1!",
     });
 
-    expect(result.token).toBe("fake.jwt.token");
+    expect(result.accessToken).toBe("fake.jwt.token");
+    expect(result.refreshToken).toEqual(expect.any(String));
     expect(result.user).toEqual({
       id: "user123",
       name: "PJ",
