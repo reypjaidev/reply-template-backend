@@ -5,6 +5,7 @@ export interface RefreshTokenDocument extends Document {
   userId: mongoose.Types.ObjectId;
   token: string;
   expiresAt: Date;
+  used: boolean;
 }
 
 const refreshTokenSchema = new Schema<RefreshTokenDocument>({
@@ -20,6 +21,12 @@ const refreshTokenSchema = new Schema<RefreshTokenDocument>({
   expiresAt: {
     type: Date,
     required: [true, "Expiration date is required"],
+  },
+  // rotated-away tokens are marked used (not deleted) so a later replay of the
+  // same raw token can still be looked up — that's what flags reuse
+  used: {
+    type: Boolean,
+    default: false,
   },
 });
 

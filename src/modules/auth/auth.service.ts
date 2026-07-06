@@ -4,7 +4,12 @@ import jwt from "jsonwebtoken";
 import config from "../../config/index.ts";
 import { UnauthorizedError, ValidationError } from "../../errors/index.ts";
 import { usersRepository } from "../users/users.repository.ts";
-import type { AuthResponse, LoginDto, RegisterDto } from "./auth.types.ts";
+import type {
+  AuthResponse,
+  LoginDto,
+  RefreshResponse,
+  RegisterDto,
+} from "./auth.types.ts";
 import { RefreshTokenModel } from "./refreshToken.model.ts";
 
 export const authService = {
@@ -57,6 +62,36 @@ export const authService = {
         email: user.email,
       },
     };
+  },
+
+  async refresh(rawToken: string): Promise<RefreshResponse> {
+    const tokenHash = hashToken(rawToken);
+    const stored = await RefreshTokenModel.findOne({ token: tokenHash });
+
+    if (!stored) throw new UnauthorizedError("Invalid refresh token");
+
+    // this exact token was already rotated away once — someone is replaying
+    // a copy, so nuke every refresh token this user has and force a re-login
+    if (stored.used) {
+      await RefreshTokenModel.deleteMany({ userId: stored.userId });
+      throw new UnauthorizedError(
+        "Refresh token reuse detected — please log in again",
+      );
+    }
+
+    if (stored.expiresAt < new Date()) {
+      throw new UnauthorizedError("Refresh token expired");
+    }
+
+    // rotate: retire this one, issue a fresh pair
+    stored.used = true;
+    await stored.save();
+
+    const userId = stored.userId.toString();
+    const accessToken = generateToken(userId);
+    const refreshToken = await generateRefreshToken(userId);
+
+    return { accessToken, refreshToken };
   },
 };
 

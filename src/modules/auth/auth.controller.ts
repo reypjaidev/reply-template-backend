@@ -1,5 +1,6 @@
 import type { NextFunction, Response } from "express";
 import config from "../../config/index.ts";
+import { UnauthorizedError } from "../../errors/index.ts";
 import type { TypedRequest } from "../../types/express.ts";
 import { sendSuccess } from "../../utils/response.ts";
 import { authService } from "./auth.service.ts";
@@ -55,6 +56,26 @@ export const authController = {
       );
       setAuthCookies(res, accessToken, refreshToken);
       sendSuccess(res, { user });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // POST /api/auth/refresh
+  async refresh(
+    req: TypedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const rawToken = req.cookies?.refreshToken;
+      if (!rawToken) throw new UnauthorizedError("No refresh token provided");
+
+      const { accessToken, refreshToken } = await authService.refresh(
+        rawToken,
+      );
+      setAuthCookies(res, accessToken, refreshToken);
+      sendSuccess(res, { message: "Token refreshed" });
     } catch (err) {
       next(err);
     }

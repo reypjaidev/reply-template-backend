@@ -27,6 +27,16 @@ const validUser = {
   password: "Secret123!",
 };
 
+// pulls "name=value" (no attributes) out of a Set-Cookie header so it can be
+// replayed on a follow-up request via .set("Cookie", [...])
+function getCookie(res: request.Response, name: string): string {
+  const raw = (res.headers["set-cookie"] as unknown as string[]).find((c) =>
+    c.startsWith(`${name}=`),
+  );
+  if (!raw) throw new Error(`cookie "${name}" not found in response`);
+  return raw.split(";")[0];
+}
+
 describe("POST /api/v1/auth/register", () => {
   it("registers a new user, sets accessToken + refreshToken cookies, and returns only the user (never tokens or password)", async () => {
     const res = await request(app)
@@ -103,6 +113,70 @@ describe("POST /api/v1/auth/login", () => {
     expect(wrongPassword.status).toBe(401);
     expect(unknownEmail.status).toBe(401);
     expect(wrongPassword.body.error).toBe(unknownEmail.body.error);
+  });
+});
+
+describe("POST /api/v1/auth/refresh", () => {
+  it("rejects requests with no refreshToken cookie", async () => {
+    const res = await request(app).post(`${API_PREFIX}/auth/refresh`);
+    expect(res.status).toBe(401);
+  });
+
+  it("rejects a malformed/garbage refresh token", async () => {
+    const res = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", ["refreshToken=not-a-real-token"]);
+    expect(res.status).toBe(401);
+  });
+
+  it("rotates the refresh token and issues a working access token", async () => {
+    await request(app).post(`${API_PREFIX}/auth/register`).send(validUser);
+    const login = await request(app)
+      .post(`${API_PREFIX}/auth/login`)
+      .send({ email: validUser.email, password: validUser.password });
+
+    const oldRefreshCookie = getCookie(login, "refreshToken");
+
+    const refreshRes = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", [oldRefreshCookie]);
+
+    expect(refreshRes.status).toBe(200);
+    const newRefreshCookie = getCookie(refreshRes, "refreshToken");
+    expect(newRefreshCookie).not.toBe(oldRefreshCookie);
+
+    const newAccessCookie = getCookie(refreshRes, "accessToken");
+    const usersRes = await request(app)
+      .get(`${API_PREFIX}/users`)
+      .set("Cookie", [newAccessCookie]);
+    expect(usersRes.status).toBe(200);
+  });
+
+  it("detects reuse of an already-rotated refresh token and revokes the whole session", async () => {
+    await request(app).post(`${API_PREFIX}/auth/register`).send(validUser);
+    const login = await request(app)
+      .post(`${API_PREFIX}/auth/login`)
+      .send({ email: validUser.email, password: validUser.password });
+
+    const oldRefreshCookie = getCookie(login, "refreshToken");
+
+    const firstRefresh = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", [oldRefreshCookie]);
+    const rotatedRefreshCookie = getCookie(firstRefresh, "refreshToken");
+
+    // replaying the token that was already rotated away is the reuse signal
+    const replay = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", [oldRefreshCookie]);
+    expect(replay.status).toBe(401);
+
+    // the legitimately-rotated-to token should now be revoked too — the
+    // whole session was nuked, not just the replayed token
+    const afterReuse = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", [rotatedRefreshCookie]);
+    expect(afterReuse.status).toBe(401);
   });
 });
 

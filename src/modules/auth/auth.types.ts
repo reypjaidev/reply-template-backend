@@ -18,3 +18,8 @@ export interface AuthResponse {
     email: string;
   };
 }
+
+export interface RefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+}
