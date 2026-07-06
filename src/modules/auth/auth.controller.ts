@@ -6,6 +6,12 @@ import { sendSuccess } from "../../utils/response.ts";
 import { authService } from "./auth.service.ts";
 import type { LoginDto, RegisterDto } from "./auth.types.ts";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: config.isProd,
+  sameSite: "lax" as const,
+};
+
 // private helper — not exported
 function setAuthCookies(
   res: Response,
@@ -13,17 +19,19 @@ function setAuthCookies(
   refreshToken: string,
 ): void {
   res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: config.isProd,
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: config.jwt.accessTokenMaxAge,
   });
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: config.isProd,
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: config.jwt.refreshTokenExpiresIn,
   });
+}
+
+// private helper — not exported
+function clearAuthCookies(res: Response): void {
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 }
 
 export const authController = {
@@ -76,6 +84,24 @@ export const authController = {
       );
       setAuthCookies(res, accessToken, refreshToken);
       sendSuccess(res, { message: "Token refreshed" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // POST /api/auth/logout
+  async logout(
+    req: TypedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const rawToken = req.cookies?.refreshToken;
+      if (rawToken) {
+        await authService.logout(rawToken);
+      }
+      clearAuthCookies(res);
+      sendSuccess(res, { message: "Logged out" });
     } catch (err) {
       next(err);
     }

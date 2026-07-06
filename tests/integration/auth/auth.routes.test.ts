@@ -180,6 +180,52 @@ describe("POST /api/v1/auth/refresh", () => {
   });
 });
 
+describe("POST /api/v1/auth/logout", () => {
+  it("succeeds even with no refreshToken cookie", async () => {
+    const res = await request(app).post(`${API_PREFIX}/auth/logout`);
+    expect(res.status).toBe(200);
+  });
+
+  it("clears both cookies", async () => {
+    await request(app).post(`${API_PREFIX}/auth/register`).send(validUser);
+    const login = await request(app)
+      .post(`${API_PREFIX}/auth/login`)
+      .send({ email: validUser.email, password: validUser.password });
+
+    const res = await request(app)
+      .post(`${API_PREFIX}/auth/logout`)
+      .set("Cookie", [
+        getCookie(login, "accessToken"),
+        getCookie(login, "refreshToken"),
+      ]);
+
+    expect(res.status).toBe(200);
+    const cookies = res.headers["set-cookie"] as unknown as string[];
+    // cleared cookies are re-sent with an empty value and an expiry in the past
+    expect(cookies.some((c) => c.startsWith("accessToken=;"))).toBe(true);
+    expect(cookies.some((c) => c.startsWith("refreshToken=;"))).toBe(true);
+  });
+
+  it("revokes the refresh token so it can no longer be used to get a new access token", async () => {
+    await request(app).post(`${API_PREFIX}/auth/register`).send(validUser);
+    const login = await request(app)
+      .post(`${API_PREFIX}/auth/login`)
+      .send({ email: validUser.email, password: validUser.password });
+
+    const refreshCookie = getCookie(login, "refreshToken");
+
+    await request(app)
+      .post(`${API_PREFIX}/auth/logout`)
+      .set("Cookie", [refreshCookie]);
+
+    const refreshAfterLogout = await request(app)
+      .post(`${API_PREFIX}/auth/refresh`)
+      .set("Cookie", [refreshCookie]);
+
+    expect(refreshAfterLogout.status).toBe(401);
+  });
+});
+
 describe("GET /api/users (protected route)", () => {
   it("rejects requests with no accessToken cookie", async () => {
     const res = await request(app).get(`${API_PREFIX}/users`);

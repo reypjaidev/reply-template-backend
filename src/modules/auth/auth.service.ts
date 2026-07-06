@@ -93,6 +93,11 @@ export const authService = {
 
     return { accessToken, refreshToken };
   },
+
+  async logout(rawToken: string): Promise<void> {
+    const tokenHash = hashToken(rawToken);
+    await RefreshTokenModel.deleteOne({ token: tokenHash });
+  },
 };
 
 // private helper — not exported
