@@ -10,10 +10,11 @@ export function validate(schema: ZodSchema) {
       next();
     } catch (err) {
       if (err instanceof ZodError) {
-        const message = err.issues
-          .map((e) => `${e.path.join(".")}: ${e.message}`)
-          .join(", ");
-        next(new ValidationError(message));
+        const fieldErrors = err.issues.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        }));
+        next(new ValidationError("Validation failed", fieldErrors));
         return;
       }
       next(err);

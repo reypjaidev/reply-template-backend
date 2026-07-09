@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { AppError } from "../errors/index.ts";
+import { AppError, ValidationError } from "../errors/index.ts";
 import { sendError } from "../utils/response.ts";
 
 export function errorHandler(
@@ -10,7 +10,8 @@ export function errorHandler(
 ): void {
   // Known operational error (we threw this intentionally)
   if (err instanceof AppError) {
-    sendError(res, err.message, err.statusCode);
+    const errors = err instanceof ValidationError ? err.errors : undefined;
+    sendError(res, err.message, err.statusCode, errors);
     return;
   }
 

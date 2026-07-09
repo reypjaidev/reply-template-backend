@@ -74,6 +74,26 @@ describe("POST /api/v1/auth/register", () => {
     expect(res.body.success).toBe(false);
   });
 
+  it("returns a structured, per-field error array on invalid input", async () => {
+    const res = await request(app)
+      .post(`${API_PREFIX}/auth/register`)
+      .send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ field: "name" }),
+        expect.objectContaining({ field: "email" }),
+        expect.objectContaining({ field: "password" }),
+      ]),
+    );
+    // every entry has a human-readable message alongside the field name
+    for (const fieldError of res.body.errors) {
+      expect(typeof fieldError.message).toBe("string");
+    }
+  });
+
   it("rejects a malformed email", async () => {
     const res = await request(app)
       .post(`${API_PREFIX}/auth/register`)

@@ -1,3 +1,5 @@
+import type { FieldError } from "../types/response.ts";
+
 export class AppError extends Error {
   statusCode: number;
 
@@ -28,7 +30,10 @@ export class ForbiddenError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  constructor(message = "Validation failed") {
+  errors?: FieldError[];
+
+  constructor(message = "Validation failed", errors?: FieldError[]) {
     super(message, 400);
+    this.errors = errors;
   }
 }

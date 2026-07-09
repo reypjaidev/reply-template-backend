@@ -24,7 +24,8 @@ export const sendError = (
   res: Response,
   error: string,
   statusCode: number = 500,
+  errors?: ApiResponse<null>["errors"],
 ): void => {
-  const response: ApiResponse<null> = { success: false, error };
+  const response: ApiResponse<null> = { success: false, error, errors };
   res.status(statusCode).json(response);
 };
