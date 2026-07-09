@@ -37,7 +37,4 @@ const userSchema = new Schema<UserDocument>(
   },
 );
 
-// index for faster login queries — we query by email on every login
-userSchema.index({ email: 1 });
-
 export const UserModel = mongoose.model<UserDocument>("User", userSchema);
