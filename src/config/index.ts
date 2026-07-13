@@ -14,7 +14,7 @@ const config = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
   server: {
-    port: Number(process.env.PORT) || 3000,
+    port: Number(process.env.PORT) || 4000,
   },
   db: {
     url: process.env.DB_URL as string,
@@ -33,7 +33,7 @@ const config = {
     refreshTokenExpiresIn:
       process.env.NODE_ENV === "production"
         ? 30 * 24 * 60 * 60 * 1000
-        : 1 * 60 * 1000, // for testing, 1 minute in development
+        : 7 * 24 * 60 * 60 * 1000,
     //: 7 * 24 * 60 * 60 * 1000, // 30 days in production, 7 days in development
   },
   aws: {
