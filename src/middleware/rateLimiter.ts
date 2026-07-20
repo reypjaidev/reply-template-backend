@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit";
+import config from "../config/index.ts";
 
 // Skip rate limiting during automated tests only — a test suite legitimately
 // fires more requests per IP than a real user would in 15 minutes.
@@ -14,7 +15,7 @@ export const globalLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // stricter for login/register
+  max: config.isDev ? 100 : 10, // stricter for login/register
   message: { error: "Too many attempts, please try again later" },
   skip: skipInTest,
 });
