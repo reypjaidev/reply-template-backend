@@ -8,19 +8,19 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 let mongod: MongoMemoryServer | null = null;
 
 export async function connectTestDB(): Promise<void> {
-  mongod = await MongoMemoryServer.create();
-  await mongoose.connect(mongod.getUri());
+    mongod = await MongoMemoryServer.create();
+    await mongoose.connect(mongod.getUri());
 }
 
 export async function clearTestDB(): Promise<void> {
-  const { collections } = mongoose.connection;
-  for (const key of Object.keys(collections)) {
-    await collections[key].deleteMany({});
-  }
+    const { collections } = mongoose.connection;
+    for (const key of Object.keys(collections)) {
+        await collections[key].deleteMany({});
+    }
 }
 
 export async function closeTestDB(): Promise<void> {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  if (mongod) await mongod.stop();
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+    if (mongod) await mongod.stop();
 }

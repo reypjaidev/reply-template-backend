@@ -1,55 +1,55 @@
 {
-  "name": "backend-practice",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon --exec \"ts-node --esm\" server.ts",
-    "build": "tsc",
-    "start": "node --watch server.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:unit": "vitest run tests/unit",
-    "test:integration": "vitest run tests/integration",
-    "prepare": "husky"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "lint-staged": {
-    "*.{ts,js,json,md}": "prettier --write"
-  },
-  "devDependencies": {
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/mongoose": "^5.11.97",
-    "@types/node": "^25.9.3",
-    "@types/supertest": "^6.0.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.2.0",
-    "mongodb-memory-server": "^10.1.2",
-    "nodemon": "^3.1.14",
-    "prettier": "^3.9.6",
-    "supertest": "^7.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^6.0.3",
-    "vitest": "^2.1.8"
-  },
-  "dependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "bcrypt": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.5.2",
-    "helmet": "^8.2.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.3",
-    "morgan": "^1.11.0",
-    "zod": "^4.4.3"
-  }
+    "name": "backend-practice",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon --exec \"ts-node --esm\" server.ts",
+        "build": "tsc",
+        "start": "node --watch server.ts",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:unit": "vitest run tests/unit",
+        "test:integration": "vitest run tests/integration",
+        "prepare": "husky"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "lint-staged": {
+        "*.{ts,js,json,md}": "prettier --write"
+    },
+    "devDependencies": {
+        "@types/cookie-parser": "^1.4.10",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/mongoose": "^5.11.97",
+        "@types/node": "^25.9.3",
+        "@types/supertest": "^6.0.2",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.2.0",
+        "mongodb-memory-server": "^10.1.2",
+        "nodemon": "^3.1.14",
+        "prettier": "^3.9.6",
+        "supertest": "^7.0.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^6.0.3",
+        "vitest": "^2.1.8"
+    },
+    "dependencies": {
+        "@types/bcrypt": "^6.0.0",
+        "bcrypt": "^6.0.0",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.6",
+        "dotenv": "^17.4.2",
+        "express": "^5.2.1",
+        "express-rate-limit": "^8.5.2",
+        "helmet": "^8.2.0",
+        "jsonwebtoken": "^9.0.3",
+        "mongoose": "^9.7.3",
+        "morgan": "^1.11.0",
+        "zod": "^4.4.3"
+    }
 }

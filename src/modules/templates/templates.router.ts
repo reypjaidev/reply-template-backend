@@ -2,8 +2,8 @@ import { Router } from "express";
 import { validate } from "../../middleware/validate.ts";
 import { templatesController } from "./templates.controller.ts";
 import {
-  createTemplateSchema,
-  updateTemplateSchema,
+    createTemplateSchema,
+    updateTemplateSchema,
 } from "./templates.schema.ts";
 
 const router = Router();
@@ -12,14 +12,14 @@ const router = Router();
 router.get("/", templatesController.getTemplates);
 router.get("/:id", templatesController.getTemplate);
 router.post(
-  "/",
-  validate(createTemplateSchema),
-  templatesController.createTemplate,
+    "/",
+    validate(createTemplateSchema),
+    templatesController.createTemplate,
 );
 router.put(
-  "/:id",
-  validate(updateTemplateSchema),
-  templatesController.updateTemplate,
+    "/:id",
+    validate(updateTemplateSchema),
+    templatesController.updateTemplate,
 );
 router.delete("/:id", templatesController.deleteTemplate);
 

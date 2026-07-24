@@ -2,9 +2,9 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
-  type Application,
-  type Request,
-  type Response,
+    type Application,
+    type Request,
+    type Response,
 } from "express";
 import helmet from "helmet";
 import config from "./config/index.ts";
@@ -21,10 +21,10 @@ const app: Application = express();
 // ── 1. SECURITY ──────────────────────────────────────────
 app.use(helmet());
 app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // your React app
-    credentials: true, // allow cookies
-  }),
+    cors({
+        origin: process.env.CLIENT_URL || "http://localhost:5173", // your React app
+        credentials: true, // allow cookies
+    }),
 );
 
 // ── 2. RATE LIMITING ─────────────────────────────────────
@@ -41,11 +41,11 @@ app.use(requestLogger);
 // ── 5. HEALTH CHECK ──────────────────────────────────────
 // no auth, no rate limit — for Docker/monitoring to ping
 app.get("/health", (req: Request, res: Response) => {
-  res.json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
+    res.json({
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+    });
 });
 // ── 6. PUBLIC ROUTES ─────────────────────────────────────
 app.use(`${config.api.prefix}/auth`, authLimiter, authRouter);
@@ -56,9 +56,9 @@ app.use(`${config.api.prefix}/templates`, authMiddleware, templatesRouter);
 
 // ── 8. 404 ───────────────────────────────────────────────
 app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: `Route ${req.method} ${req.originalUrl} not found`,
-  });
+    res.status(404).json({
+        error: `Route ${req.method} ${req.originalUrl} not found`,
+    });
 });
 
 // ── 9. ERROR HANDLER ─────────────────────────────────────

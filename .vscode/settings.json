@@ -1,7 +1,7 @@
 {
-  "files.associations": {
-    "**/templates/**/*.ts": "typescript",
-    "**/templates/**/*.js": "javascript",
-    "**/templates/**/*.json": "json"
-  }
+    "files.associations": {
+        "**/templates/**/*.ts": "typescript",
+        "**/templates/**/*.js": "javascript",
+        "**/templates/**/*.json": "json"
+    }
 }

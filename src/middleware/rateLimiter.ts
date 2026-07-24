@@ -7,15 +7,15 @@ import config from "../config/index.ts";
 const skipInTest = () => process.env.NODE_ENV === "test";
 
 export const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per window
-  message: { error: "Too many requests, please try again later" },
-  skip: skipInTest,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per window
+    message: { error: "Too many requests, please try again later" },
+    skip: skipInTest,
 });
 
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: config.isDev ? 100 : 10, // stricter for login/register
-  message: { error: "Too many attempts, please try again later" },
-  skip: skipInTest,
+    windowMs: 15 * 60 * 1000,
+    max: config.isDev ? 100 : 10, // stricter for login/register
+    message: { error: "Too many attempts, please try again later" },
+    skip: skipInTest,
 });

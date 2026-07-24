@@ -2,39 +2,39 @@
 import mongoose, { type Document, Schema } from "mongoose";
 
 export interface UserDocument extends Document {
-  _id: mongoose.Types.ObjectId;
-  name: string;
-  email: string;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
+    _id: mongoose.Types.ObjectId;
+    name: string;
+    email: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
-  {
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      trim: true,
-      minlength: [2, "Name must be at least 2 characters"],
-      maxlength: [50, "Name cannot exceed 50 characters"],
+    {
+        name: {
+            type: String,
+            required: [true, "Name is required"],
+            trim: true,
+            minlength: [2, "Name must be at least 2 characters"],
+            maxlength: [50, "Name cannot exceed 50 characters"],
+        },
+        email: {
+            type: String,
+            required: [true, "Email is required"],
+            unique: true,
+            lowercase: true,
+            trim: true,
+            match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
+        },
+        password: {
+            type: String,
+            required: [true, "Password is required"],
+        },
     },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
+    {
+        timestamps: true, // auto-manages createdAt and updatedAt
     },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-    },
-  },
-  {
-    timestamps: true, // auto-manages createdAt and updatedAt
-  },
 );
 
 export const UserModel = mongoose.model<UserDocument>("User", userSchema);

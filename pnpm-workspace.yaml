@@ -1,4 +1,4 @@
 allowBuilds:
-  bcrypt: true
-  esbuild: true
-  mongodb-memory-server: true
+    bcrypt: true
+    esbuild: true
+    mongodb-memory-server: true
