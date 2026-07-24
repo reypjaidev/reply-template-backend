@@ -13,6 +13,7 @@ import { errorHandler } from "./middleware/errorHandler.ts";
 import { authLimiter, globalLimiter } from "./middleware/rateLimiter.ts";
 import { requestLogger } from "./middleware/requestLogger.ts";
 import authRouter from "./modules/auth/auth.router.ts";
+import templatesRouter from "./modules/templates/templates.router.ts";
 import usersRouter from "./modules/users/users.router.ts";
 
 const app: Application = express();
@@ -51,6 +52,7 @@ app.use(`${config.api.prefix}/auth`, authLimiter, authRouter);
 
 // ── 7. PROTECTED ROUTES ──────────────────────────────────
 app.use(`${config.api.prefix}/users`, authMiddleware, usersRouter);
+app.use(`${config.api.prefix}/templates`, authMiddleware, templatesRouter);
 
 // ── 8. 404 ───────────────────────────────────────────────
 app.use((req: Request, res: Response) => {
