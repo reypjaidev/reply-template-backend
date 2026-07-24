@@ -75,9 +75,7 @@ describe("POST /api/v1/auth/register", () => {
   });
 
   it("returns a structured, per-field error array on invalid input", async () => {
-    const res = await request(app)
-      .post(`${API_PREFIX}/auth/register`)
-      .send({});
+    const res = await request(app).post(`${API_PREFIX}/auth/register`).send({});
 
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);

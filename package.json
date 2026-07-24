@@ -10,12 +10,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/unit",
-    "test:integration": "vitest run tests/integration"
+    "test:integration": "vitest run tests/integration",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
+  "lint-staged": {
+    "*.{ts,js,json,md}": "prettier --write"
+  },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -24,8 +28,11 @@
     "@types/mongoose": "^5.11.97",
     "@types/node": "^25.9.3",
     "@types/supertest": "^6.0.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
     "mongodb-memory-server": "^10.1.2",
     "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",

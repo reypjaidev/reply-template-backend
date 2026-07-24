@@ -79,9 +79,7 @@ export const authController = {
       const rawToken = req.cookies?.refreshToken;
       if (!rawToken) throw new UnauthorizedError("No refresh token provided");
 
-      const { accessToken, refreshToken } = await authService.refresh(
-        rawToken,
-      );
+      const { accessToken, refreshToken } = await authService.refresh(rawToken);
       setAuthCookies(res, accessToken, refreshToken);
       sendSuccess(res, { message: "Token refreshed" });
     } catch (err) {
