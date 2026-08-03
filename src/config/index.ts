@@ -9,10 +9,12 @@ requiredEnvVars.forEach((key) => {
     }
 });
 
+const env = process.env.NODE_ENV || "development";
+
 const config = {
-    env: process.env.NODE_ENV || "development",
-    isDev: process.env.NODE_ENV === "development",
-    isProd: process.env.NODE_ENV === "production",
+    env,
+    isDev: env === "development",
+    isProd: env === "production",
     server: {
         port: Number(process.env.PORT) || 4000,
     },
