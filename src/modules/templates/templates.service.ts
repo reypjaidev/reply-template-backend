@@ -10,13 +10,13 @@ import type { TemplateDocument } from "./templates.model.ts";
 function toResponseDto(
     template: Pick<
         TemplateDocument,
-        "_id" | "title" | "content" | "createdAt" | "updatedAt"
+        "_id" | "title" | "body" | "createdAt" | "updatedAt"
     >,
 ): TemplateResponseDto {
     return {
         id: template._id.toString(),
         title: template.title,
-        content: template.content,
+        body: template.body,
         createdAt: template.createdAt,
         updatedAt: template.updatedAt,
     };

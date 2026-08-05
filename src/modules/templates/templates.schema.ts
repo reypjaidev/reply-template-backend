@@ -5,7 +5,7 @@ export const createTemplateSchema = z.object({
         .string()
         .min(2, "Title must be at least 2 characters")
         .max(50, "Title cannot exceed 50 characters"),
-    content: z
+    body: z
         .string()
         .min(2, "Content must be at least 2 characters")
         .max(1000, "Content cannot exceed 1000 characters"),
@@ -18,12 +18,12 @@ export const updateTemplateSchema = z
             .min(2, "Title must be at least 2 characters")
             .max(50, "Title cannot exceed 50 characters")
             .optional(),
-        content: z
+        body: z
             .string()
             .min(2, "Content must be at least 2 characters")
             .max(1000, "Content cannot exceed 1000 characters")
             .optional(),
     })
-    .refine((data) => data.title !== undefined || data.content !== undefined, {
+    .refine((data) => data.title !== undefined || data.body !== undefined, {
         message: "At least one field must be provided",
     });
