@@ -9,6 +9,7 @@ export const createTemplateSchema = z.object({
         .string()
         .min(2, "Content must be at least 2 characters")
         .max(1000, "Content cannot exceed 1000 characters"),
+    color: z.enum(["yellow", "pink", "blue", "green", "purple", "gray"]),
 });
 
 export const updateTemplateSchema = z
@@ -23,7 +24,16 @@ export const updateTemplateSchema = z
             .min(2, "Content must be at least 2 characters")
             .max(1000, "Content cannot exceed 1000 characters")
             .optional(),
+        color: z
+            .enum(["yellow", "pink", "blue", "green", "purple", "gray"])
+            .optional(),
     })
-    .refine((data) => data.title !== undefined || data.body !== undefined, {
-        message: "At least one field must be provided",
-    });
+    .refine(
+        (data) =>
+            data.title !== undefined ||
+            data.body !== undefined ||
+            data.color !== undefined,
+        {
+            message: "At least one field must be provided",
+        },
+    );
