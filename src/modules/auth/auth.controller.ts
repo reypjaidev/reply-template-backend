@@ -9,7 +9,7 @@ import type { LoginDto, RegisterDto } from "./auth.types.ts";
 const cookieOptions = {
     httpOnly: true,
     secure: config.isProd,
-    sameSite: "lax" as const,
+    sameSite: "none" as const,
 };
 
 // private helper — not exported
