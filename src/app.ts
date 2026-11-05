@@ -22,7 +22,7 @@ const app: Application = express();
 app.use(helmet());
 app.use(
     cors({
-        origin: process.env.CLIENT_URL || "http://localhost:5173", // your React app
+        origin: process.env.CLIENT_URL || "http://localhost:3000", // your React app
         credentials: true, // allow cookies
     }),
 );
