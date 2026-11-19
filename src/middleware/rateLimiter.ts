@@ -15,7 +15,7 @@ export const globalLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: config.isDev ? 100 : 10, // stricter for login/register
+    max: config.isDev ? 100 : 100, // stricter for login/register
     message: { error: "Too many attempts, please try again later" },
     skip: skipInTest,
 });
